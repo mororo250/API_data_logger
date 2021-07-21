@@ -1,91 +1,164 @@
-v# Data Logger Shield para Arduino com RTC DS1307
+# Data Logger Shield para Arduino com RTC DS1307
 
 # Projeto: 
 
-Esse projeto foi desenvolvido no contexto da disciplina “Programação de Sistemas Embarcados” ofertada para o curso de Engenharia Elétrica da UFMG. O objetivo desse projeto é desenvolver uma API para o Data Logger Shield.
+This project was developed asa an assignment for the discipline of Embedded Systems Programming at the federal University of Minas Gerais(UFMG). O The goal of this project was to developed a data logger shield API for arduino.
 
-## Hardware: 
+## Hardware amd software: 6
 
-O data logger utilizado é o data logger shield da adafruit. Ele possui ... 
+The data logger utilized was the data logger shield from adafruit.
 
+![image](Images/Data_Logger.jpg)
 
-Foi utilizado o arduino uno. E os sensores de temperatura L35 e o sensor de humidade DH22. També foi utilizado o software proteus para simular os projeto.
+Besides the data logger it was used an arduino uno, temperature sensors and humidity DH22.
 
+![image](Images/Arduino.jpg)
+
+Proteus was also used for simulations
+
+![image](Images/Proteus.jpg)
 
 # API
 
-A API desenvolvida permite utilziar o data logger de forma rapida e facíl, mantendo um grande nivel de flexibilidade.
+The API was develiped to allow utilize the data logger in a fast and eazy way while still keeping some flexibility.
+
+## Fuctions
+
+```C
+DataLooger
+```
+Main class of the library. Needs to be declared at the beggining of the program as a global variable.
+
+### Setup Fuctions
+
+```C
+setup()
+```
+
+Needes to be called before any other function. It will initialize the data logger and setup some basic informations.
+
+```C
+void create_file(char const* filename);      // Replace file name if filename exists.
+void open_file(char const* filename);        // Open existing file. 
+```
+
+Create_File() create file and if a file with the same name exists it's replaced and open_file() opens existing file. 
+
+```C
+void log_header(char const* str);
+```
+
+log_header() writes to the header. The parameter format should be: "Name, Temperature, color, ..."
+
+### Loop Fuctions
+
+```C
+void run()
+```
+
+Fuction resposible for write to file, sync with SD it's a template fuction and can recieve n inputs of any type.
+
+
+The next fuctions needes to be used as a run()'s substitute, and has the objective to give more control for the user. 
+
+```C
+void log_time();
+```
+
+Writes date, hour and miliseconds since start.
+
+```C
+void record()
+```
+
+Writes data to sd. It's a template function and can recieve n inputs of any type.
+
+```C
+void sync();
+```
+
+Sync data with SD.
+
+```C
+void set_time(uint16_t year, uint8_t month, uint8_t day, uint8_t hour = 0, uint8_t min = 0, uint8_t sec = 0);
+```
+
+Adjust Real time clock.
+
+```C
+void writing_LED();
+void syncing_LED();
+```
+
+Run LED paterns for writing(blink green LED) and syncing(blink green and red LED).
 
 ## Variables:
 
-
-Pin Variables.
-
-```C
-int         m_redLEDpin;
-int         m_greenLEDpin;
-int         m_SDpin;
-```
+The variable are private and can be acessed and modified through a get() and set()
 
 ```C
-int         m_sync_interval;
-int         m_log_interval;
+int m_redLEDpin;
+void set_red_Led_pin(int redLED);
+int get_red_Led_pin();
 ```
+
 ```C
-uint8_t     m_flags;  
+int m_greenLEDpin;
+void set_green_Led_pin(int greenLED);
+int get_red_Led_pin();
 ```
+
 ```C
-File        m_logfile;
+int m_SDpin;
+void set_SD_pin(int const SDpin);
+int get_SD_pin(); 
 ```
+
 ```C
-char*       m_filename; 
+int m_sync_interval;
+void set_sync_interval(int const sync_interval);
+int get_sync_interval();
 ```
+
+```C
+int m_log_interval;
+void set_sync_interval(int const sync_interval);
+int get_sync_interval();
+```
+
 ```C
 RTC_DS1307  m_RTC;
+RTC_DS1307 get_real_time_clock();
 ```
 
-## Funções
+### Flags
 
-void setup();
-void create_file(char const* filename);      // Replace file name if filename exists.
-void open_file(char const* filename);        // Open existing file. 
-void log_header(char const* str);
-void log_time();
+```C
+uint8_t  m_flags;  
 
-void record()
-void run()
-void sync(); // which uses a bunch of power and takes time
+FLAG_WRITING_LED
+FLAG_SYNCING_LED  
+FLAG_LOG_DATE_TIME
+FLAG_SLEEP_MODE
+``` 
 
-void set_red_Led_pin(int const redLedpin) { m_redLEDpin = redLedpin;}
-void set_green_Led_pin(int const greenLedpin) {m_greenLEDpin = greenLedpin;}
-void set_SD_pin(int const SDpin) {m_SDpin = SDpin;}
-void set_sync_interval(int const sync_interval) {m_sync_interval = sync_interval;}
-void set_log_interval(int const log_interval) {m_log_interval = log_interval;}
-void set_time(uint16_t year, uint8_t month, uint8_t day, uint8_t hour = 0, uint8_t min = 0, uint8_t sec = 0);
+```C
+void enable_writingLED()    // Enable LED pattern when writing. (blink green LED)
+void disable_writingLED()
+void enable_syncingLED()    // Enable LED pattern when syncing. (blink green and red LED)
+void disable_syncingLED()
+void enable_time_log()      // Enable right time log to log_time().
+void disable_time_log()
+``` 
 
+```C
+void wake_up();
+void sleep();
+```
 
-int get_red_Led_pin() const {return m_redLEDpin;} 
-int get_green_Led_pin() const {return m_greenLEDpin;}
-int get_SD_pin() const {return m_SDpin;}
-int get_sync_interval() {return m_sync_interval;}
-int get_log_interval() {return m_log_interval;}
-RTC_DS1307 get_real_time_clock() {return m_RTC;}
+Sleep set FLAG_SLEEP_MODE to 0 and wake_up() to 1.
 
-void writing_LED();
-void syncing_LED();
+# Reference
 
-void enable_writingLED() { m_flags |= FLAG_WRITING_LED; }
-void enable_syncingLED() { m_flags |= FLAG_SYNCING_LED; }
-void enable_time_log() { m_flags |= FLAG_LOG_DATE_TIME; }
-void sleep() { m_flags |= FLAG_SLEEP_MODE;  digitalWrite(m_SDpin, LOW); }
-void disable_writingLED() { m_flags &= ~FLAG_WRITING_LED; }
-void disable_syncingLED() { m_flags &= ~FLAG_SYNCING_LED; }
-void disable_time_log() { m_flags &= ~FLAG_LOG_DATE_TIME; }
-void wake_up() { m_flags &= ~FLAG_SLEEP_MODE; digitalWrite(m_SDpin, HIGH); }
-
-
-
-## Código exemplo 
-
-
-
+https://learn.adafruit.com/adafruit-data-logger-shield
+https://store.arduino.cc/usa/arduino-uno-rev3

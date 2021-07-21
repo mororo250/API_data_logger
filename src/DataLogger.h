@@ -76,7 +76,7 @@ class DataLogger
     sync();
   }
 
-  // Now we write data to disk! Don't sync too often - requires 2048 bytes of I/O to SD card  
+  // Write data to disk! Don't sync too often - requires 2048 bytes of I/O to SD card  
   void sync(); // which uses a bunch of power and takes time
 
   void set_red_Led_pin(int const redLedpin) { m_redLEDpin = redLedpin;}
