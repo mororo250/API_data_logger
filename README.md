@@ -16,7 +16,7 @@ Besides the data logger it was used an arduino uno, temperature sensors and humi
 
 Proteus was also used for simulations
 
-![image](Images/Proteus.jpg)
+![image](Images/Proteus.png)
 
 # API
 
